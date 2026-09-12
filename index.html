@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sketch to Structure</title>
+<meta name="description" content="An architecture studio's work from hand sketch through AI concept render to a full construction-document set.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#F6F2EA;
+    --paper-raised:#FFFFFF;
+    --ink:#181914;
+    --ink-soft:#5B5D5A;
+    --ink-faint:#8B8C86;
+    --line:#DCD5C5;
+    --line-strong:#C9C0AC;
+    --accent:#2740D6;
+    --accent-ink:#1C2FA8;
+    --accent-soft:#E7E9FA;
+    --shadow: 0 1px 0 rgba(24,25,20,0.04);
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#121213;
+      --paper-raised:#1B1C1D;
+      --ink:#EFEDE6;
+      --ink-soft:#ABAAA3;
+      --ink-faint:#77766F;
+      --line:#302F2B;
+      --line-strong:#413F38;
+      --accent:#7C8CFF;
+      --accent-ink:#A5B0FF;
+      --accent-soft:#212445;
+      --shadow: 0 1px 0 rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121213;
+    --paper-raised:#1B1C1D;
+    --ink:#EFEDE6;
+    --ink-soft:#ABAAA3;
+    --ink-faint:#77766F;
+    --line:#302F2B;
+    --line-strong:#413F38;
+    --accent:#7C8CFF;
+    --accent-ink:#A5B0FF;
+    --accent-soft:#212445;
+    --shadow: 0 1px 0 rgba(0,0,0,0.3);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.55;
+    padding-inline: max(20px, calc((100vw - 1180px) / 2));
+  }
+  ::selection{ background:var(--accent-soft); color:var(--accent-ink); }
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:600; text-wrap:balance; margin:0; }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .eyebrow b{ color:var(--accent); font-weight:500; }
+
+  /* ---------- top bar ---------- */
+  header.site{
+    position:sticky; top:0; z-index:20;
+    background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+    margin-inline: max(-20px, calc(-1 * (100vw - 1180px) / 2));
+    padding-inline: max(20px, calc((100vw - 1180px) / 2));
+  }
+  .barwrap{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding-block:14px;
+  }
+  .brand{
+    font-family:var(--serif); font-weight:600; font-size:17px; letter-spacing:.01em;
+    white-space:nowrap;
+  }
+  nav.index{ display:flex; gap:22px; flex-wrap:wrap; }
+  nav.index a{
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    text-decoration:none; color:var(--ink-soft);
+    border-bottom:1px solid transparent;
+    padding-bottom:2px;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  nav.index a:hover{ color:var(--accent); border-color:var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding-block: 64px 52px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero .eyebrow{ margin-bottom:18px; }
+  .hero h1{
+    font-size:clamp(40px, 6.6vw, 78px);
+    line-height:1.02;
+    max-width:14ch;
+  }
+  .hero h1 em{
+    font-style:italic; color:var(--accent); font-weight:500;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.3fr 1fr; gap:40px;
+    margin-top:28px; align-items:end;
+  }
+  .hero-copy p{
+    max-width:46ch; color:var(--ink-soft); font-size:16.5px; margin:0;
+  }
+  .hero-meta{
+    font-family:var(--mono); font-size:12.5px; color:var(--ink-faint);
+    display:grid; gap:7px; justify-items:start;
+    border-left:1px solid var(--line-strong); padding-left:18px;
+  }
+  .hero-meta span b{ color:var(--ink); font-weight:500; }
+
+  @media (max-width:760px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero-meta{ border-left:none; padding-left:0; border-top:1px solid var(--line); padding-top:14px; }
+  }
+
+  /* ---------- project sections ---------- */
+  section.project{
+    padding-block:64px;
+    border-bottom:1px solid var(--line);
+    scroll-margin-top:70px;
+  }
+  section.project:last-of-type{ border-bottom:none; }
+
+  .project-head{
+    display:grid; grid-template-columns: 1fr 1.5fr; gap:40px;
+    margin-bottom:34px; align-items:end;
+  }
+  .project-head h2{ font-size:clamp(28px,3.6vw,40px); margin-top:8px; }
+  .project-head .desc{ color:var(--ink-soft); max-width:52ch; font-size:15.5px; }
+  .project-head .desc .term{ font-family:var(--mono); font-size:.92em; color:var(--ink); background:var(--accent-soft); padding:.05em .35em; border-radius:3px; }
+
+  @media (max-width:760px){
+    .project-head{ grid-template-columns:1fr; gap:14px; }
+  }
+
+  .hero-figure{
+    border:1px solid var(--line-strong);
+    background:var(--paper-raised);
+    box-shadow:var(--shadow);
+    margin-bottom:26px;
+    overflow:hidden;
+  }
+  .hero-figure img{ width:100%; height:auto; cursor:zoom-in; }
+  .hero-figure figcaption{
+    display:flex; justify-content:space-between; gap:16px;
+    padding:14px 18px;
+    border-top:1px solid var(--line);
+    font-size:14px; color:var(--ink-soft);
+  }
+  .hero-figure figcaption .tag{ font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); white-space:nowrap; }
+
+  .masonry{
+    columns: 3 260px;
+    column-gap:18px;
+  }
+  .masonry figure{
+    break-inside:avoid;
+    margin:0 0 18px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    box-shadow:var(--shadow);
+  }
+  .masonry figure img{ width:100%; height:auto; cursor:zoom-in; }
+  .masonry figcaption{
+    padding:11px 14px 13px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+  }
+  .masonry figcaption .tag{
+    display:block; font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    color:var(--accent); margin-bottom:4px; text-transform:uppercase;
+  }
+
+  @media (max-width:640px){
+    .masonry{ columns: 1; }
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    padding-block:40px 70px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  }
+  footer .eyebrow{ font-size:12px; }
+
+  /* ---------- lightbox ---------- */
+  .lightbox{
+    position:fixed; inset:0; z-index:50;
+    background:color-mix(in srgb, black 82%, var(--paper) 0%);
+    display:flex; align-items:center; justify-content:center;
+    padding:5vh 5vw;
+    opacity:0; pointer-events:none;
+    transition:opacity .18s ease;
+  }
+  .lightbox.open{ opacity:1; pointer-events:auto; }
+  .lightbox img{
+    max-width:100%; max-height:90vh; width:auto; margin:auto;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .lightbox .lb-cap{
+    position:fixed; left:0; right:0; bottom:18px; text-align:center;
+    font-family:var(--mono); font-size:12.5px; color:#EFEDE6; opacity:.85;
+    padding-inline:20px;
+  }
+  .lightbox .lb-close{
+    position:fixed; top:18px; right:22px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    color:#EFEDE6; background:transparent; border:1px solid rgba(239,237,230,.4);
+    padding:7px 12px; cursor:pointer; border-radius:2px;
+  }
+
+</style>
+
+</head>
+<body>
+<header class="site">
+  <div class="barwrap">
+    <div class="brand">Man&nbsp;Pham</div>
+    <nav class="index">
+      <a href="#p1">01 &middot; Sketch&nbsp;to&nbsp;Story</a>
+      <a href="#p2">02 &middot; Thought&nbsp;Process</a>
+      <a href="#p3">03 &middot; AI&nbsp;Concept&nbsp;Scenes</a>
+      <a href="#p4">04 &middot; Snowdon&nbsp;Towers</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">Architecture Studio &nbsp;&middot;&nbsp; Weeks 03&ndash;05</div>
+    <h1>Sketch to <em>Structure</em></h1>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p>A working record of one studio's move from pencil to render to construction set &mdash; hand sketches carried into AI-assisted massing studies, then resolved into schematic and construction drawings.</p>
+      </div>
+      <div class="hero-meta">
+        <span><b>Author</b> &nbsp;Man Pham</span>
+        <span><b>Sheets</b> &nbsp;17 selected</span>
+        <span><b>Range</b> &nbsp;SD &rarr; CD</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="project" id="p1">
+    <div class="project-head">
+      <div>
+        <div class="eyebrow"><b>Week 03</b> &nbsp;&middot;&nbsp; Assignment 01</div>
+        <h2>Sketch to Story</h2>
+      </div>
+      <p class="desc">A hand sketch of a multi-family residential scheme in Oakland, carried into <span class="term">RunDiffusion</span> to generate concept renders that hold the original sketch's geometry &mdash; then a courtyard scene and an aerial site plan, each a further pass on the same idea.</p>
+    </div>
+
+    <figure class="hero-figure">
+      <img src="images/a1-sketch-render.jpg" alt="Hand sketch of a street elevation above an AI-rendered night view of the same building, steel and glass with olive trees on the roof terrace" loading="lazy">
+      <figcaption><span>Scheme 01 &mdash; steel-clad massing tested against the original marker elevation</span><span class="tag">01 / 03</span></figcaption>
+    </figure>
+
+    <div class="masonry">
+      <figure>
+        <img src="images/a1-courtyard.jpg" alt="Evening render of a courtyard retail plaza with people walking and a food truck" loading="lazy">
+        <figcaption><span class="tag">Scheme 02</span>Ground-floor retail plinth and courtyard, senior and communal housing wrapped above</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a1-siteplan.jpg" alt="Aerial rendered site plan showing the building footprint at Filbert and Myrtle Streets" loading="lazy">
+        <figcaption><span class="tag">Scheme 03</span>Aerial site plan, Filbert &amp; Myrtle Streets &mdash; footprint set against the existing block</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a5-location.jpg" alt="Satellite map with a location pin marking the project site in Oakland, California" loading="lazy">
+        <figcaption><span class="tag">Site</span>West Oakland, CA &mdash; between the ball field and San Pablo Avenue</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="project" id="p2">
+    <div class="project-head">
+      <div>
+        <div class="eyebrow"><b>Week 04</b> &nbsp;&middot;&nbsp; Assignment 02</div>
+        <h2>Thought Process</h2>
+      </div>
+      <p class="desc">Diagram, elevation, and materiality for the same Oakland micro-hub &mdash; a <span class="term">FAR&nbsp;4.0</span> massing study, a program breakdown across 32,500&nbsp;sf, and a materials board of corten steel, cast concrete, and glazing set against a hand-drawn elevation.</p>
+    </div>
+
+    <figure class="hero-figure">
+      <img src="images/a2-material-board.jpg" alt="Photorealistic render of a modern mixed-use building at dusk above a marker-drawn street elevation" loading="lazy">
+      <figcaption><span>Material board &mdash; render and elevation tested side by side</span><span class="tag">D&#8209;004</span></figcaption>
+    </figure>
+
+    <div class="masonry">
+      <figure>
+        <img src="images/a2-site-analysis.jpg" alt="Grayscale 3D site model diagram with arrows marking primary views, pedestrian approach, and traffic noise" loading="lazy">
+        <figcaption><span class="tag">Site analysis</span>Primary views, pedestrian approach, and traffic noise mapped onto the 3D site model</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a2-massing-study.jpg" alt="Isometric massing diagram on a cleared site showing courtyard void, housing volumes, and planted terrace" loading="lazy">
+        <figcaption><span class="tag">Massing</span>Courtyard void, communal and senior housing, planted terrace &mdash; on the cleared site</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a2-program-diagram.jpg" alt="Isometric program diagram color coded by use, with a table of square footage by zone" loading="lazy">
+        <figcaption><span class="tag">Program</span>32,500&nbsp;sf split across retail, lobby, service, senior and communal housing</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a2-process-collage.jpg" alt="Collage of thumbnail sketches, plan diagrams, and site maps documenting the design process" loading="lazy">
+        <figcaption><span class="tag">Process</span>Thumbnail sketches through massing axonometric &mdash; the working set</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="project" id="p3">
+    <div class="project-head">
+      <div>
+        <div class="eyebrow"><b>Week 05</b> &nbsp;&middot;&nbsp; Assignment 04</div>
+        <h2>AI Concept Scenes</h2>
+      </div>
+      <p class="desc">One San&nbsp;Jose plaza, tested three ways in <span class="term">Adobe&nbsp;Firefly</span> &mdash; a scheme carried straight from sketch, a festive holiday-market variant, and a winter pass laid over the same geometry to see how the architecture reads under different light.</p>
+    </div>
+
+    <div class="masonry">
+      <figure>
+        <img src="images/a4-scheme-a.jpg" alt="Marker sketch of a storefront elevation above an AI-generated render of the same street-level plaza at dusk" loading="lazy">
+        <figcaption><span class="tag">Scheme A</span>Sketch elevation carried into a dusk street-level render</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a4-scheme-b.jpg" alt="AI-generated render of the plaza decorated for a holiday market with a lit tree and food vendors" loading="lazy">
+        <figcaption><span class="tag">Scheme B</span>The same plaza, restaged as a holiday market</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a4-winter-context.jpg" alt="The same holiday market render, reworked with heavy snow and falling flakes" loading="lazy">
+        <figcaption><span class="tag">Context</span>Winter pass &mdash; snow load and atmosphere over the same scene</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="project" id="p4">
+    <div class="project-head">
+      <div>
+        <div class="eyebrow"><b>Week 05</b> &nbsp;&middot;&nbsp; Assignment 05</div>
+        <h2>Snowdon Towers</h2>
+      </div>
+      <p class="desc">A full <span class="term">SD&nbsp;&rarr;&nbsp;CD</span> set for an adaptive mixed-use infill &mdash; new residential volumes folded behind a retained masonry storefront, carried from schematic massing through elevations, sections, and a construction-document cover.</p>
+    </div>
+
+    <figure class="hero-figure">
+      <img src="images/a5-cd-cover.jpg" alt="Construction document cover sheet with a night-time street render of the mixed-use building" loading="lazy">
+      <figcaption><span>CD set cover &mdash; street elevation at dusk</span><span class="tag">Step&nbsp;1</span></figcaption>
+    </figure>
+
+    <div class="masonry">
+      <figure>
+        <img src="images/a5-cover.jpg" alt="Schematic design cover sheet with archival photographs of the historic storefronts and a red-highlighted axonometric" loading="lazy">
+        <figcaption><span class="tag">SD Set</span>Cover sheet, with archival photographs of the site's original storefronts</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a5-elevations.jpg" alt="Construction drawing sheet A201 showing north and south building elevations" loading="lazy">
+        <figcaption><span class="tag">Sheet A201</span>Building elevations, north and south</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a5-sections.jpg" alt="Construction drawing sheet A301 showing schematic building sections through the residential and commercial cores" loading="lazy">
+        <figcaption><span class="tag">Sheet A301</span>Schematic sections, residential &amp; commercial cores</figcaption>
+      </figure>
+      <figure>
+        <img src="images/a5-3d-massing.jpg" alt="Colorful axonometric massing diagram showing new volumes behind the retained historic facade" loading="lazy">
+        <figcaption><span class="tag">Massing</span>New volumes folded behind the retained facade</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <footer>
+    <div class="eyebrow">Man Pham &nbsp;&middot;&nbsp; Architecture Studio</div>
+    <div class="eyebrow">17 sheets &nbsp;&middot;&nbsp; Weeks 03&ndash;05</div>
+  </footer>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">Close ✕</button>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<script>
+  // lightbox
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lbImg');
+  var lbCap = document.getElementById('lbCap');
+  document.querySelectorAll('figure img').forEach(function(img){
+    img.addEventListener('click', function(){
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      var cap = img.closest('figure').querySelector('figcaption');
+      lbCap.textContent = cap ? cap.textContent.trim() : '';
+      lb.classList.add('open');
+    });
+  });
+  function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
+  document.getElementById('lbClose').addEventListener('click', closeLB);
+  lb.addEventListener('click', function(e){ if(e.target === lb) closeLB(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLB(); });
+
+  // smooth scroll for index nav
+  document.querySelectorAll('nav.index a').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href');
+      var target = document.querySelector(id);
+      if(target){
+        e.preventDefault();
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+  });
+</script>
+</body>
+</html>
